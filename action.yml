@@ -69,7 +69,7 @@ runs:
         tags: ${{ steps.meta.outputs.tags }}
 
     - name: debug set output
-      id: set_outputs
+      id: debug_set_outputs
       shell: bash
       run: |
         IMAGES_WITH_TAGS="$(echo ${{ steps.meta.outputs.tags }} | tr -d '\r' | tr '\n' ' ')"
