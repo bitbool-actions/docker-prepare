@@ -79,4 +79,5 @@ runs:
     - name: print tags
       shell: bash
       run: |
-        echo ${{ steps.set_outputs.outputs.IMAGES }}
+        echo ${{ steps.set_outputs.outputs.IMAGES_WITH_TAGS }}
+        echo ${{ steps.set_outputs.outputs.TAGS_ONLY }}
