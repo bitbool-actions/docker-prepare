@@ -65,7 +65,16 @@ runs:
       uses: docker/build-push-action@v4
       with:
         context: .
+        push: true
         tags: ${{ steps.meta.outputs.tags }}
+
+    - name: debug set output
+      id: set_outputs
+      shell: bash
+      run: |
+        IMAGES_WITH_TAGS="$(echo ${{ steps.meta.outputs.tags }} | tr -d '\r' | tr '\n' ' ')"
+        echo "DEBUG IMAGES_WITH_TAGS=$IMAGES_WITH_TAGS"
+        echo "DEBUG TAGS_ONLY=$(echo $IMAGES_WITH_TAGS | sed 's#${{ inputs.DOCKER_REGISTRY }}/${{ inputs.DOCKER_REPO }}##g' )"
 
     - name: set output
       id: set_outputs
