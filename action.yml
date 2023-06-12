@@ -14,12 +14,15 @@ inputs:
   DOCKER_PASSWORD:
     required: true
 outputs:
-  images:
+  tags:
     description: "tagged images"
     value: "${{ steps.meta.outputs.tags }}"
-  images_csv:
+  images_with_tags:
     description: "tagged images comma separated"
-    value: "${{ steps.set_outputs.outputs.IMAGES_CSV }}"
+    value: "${{ steps.set_outputs.outputs.IMAGES_WITH_TAGS }}"
+  tags_only:
+    description: "only the tags"
+    value: "${{ steps.set_outputs.outputs.TAGS_ONLY }}"    
   json:
     description: "tag json"
     value: "${{ steps.meta.outputs.json }}"
@@ -68,8 +71,9 @@ runs:
       id: set_outputs
       shell: bash
       run: |
-        IMAGES_CSV="$(echo ${{ steps.meta.outputs.tags }} | tr -d '\r' | tr '\n' ',')"
-        echo "IMAGES_CSV=$IMAGES_CSV" >> $GITHUB_OUTPUT
+        IMAGES_WITH_TAGS="$(echo ${{ steps.meta.outputs.tags }} | tr -d '\r' | tr '\n' ' ')"
+        echo "IMAGES_WITH_TAGS=$IMAGES_WITH_TAGS" >> $GITHUB_OUTPUT
+        echo "TAGS_ONLY=$(echo $IMAGES_WITH_TAGS | sed 's#${{ inputs.DOCKER_REGISTRY }}/${{ inputs.DOCKER_REPO }}##g' )" >> $GITHUB_OUTPUT
 
     - name: print tags
       shell: bash
