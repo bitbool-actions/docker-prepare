@@ -77,7 +77,8 @@ runs:
       run: |
         IMAGES_WITH_TAGS=$(echo "${{ steps.meta.outputs.tags }}" | tr -d '\r' | tr '\n' ' ')
         echo "IMAGES_WITH_TAGS=$IMAGES_WITH_TAGS" >> $GITHUB_OUTPUT
-        echo "TAGS_ONLY=$(echo $IMAGES_WITH_TAGS | sed 's#${{ inputs.DOCKER_REGISTRY }}/${{ inputs.DOCKER_REPO }}:##g' )" >> $GITHUB_OUTPUT
+        TAGS_ONLY=$(echo $IMAGES_WITH_TAGS | sed 's#${{ inputs.DOCKER_REGISTRY }}/${{ inputs.DOCKER_REPO }}:##g' )
+        echo "TAGS_ONLY=$TAGS_ONLY" >> $GITHUB_OUTPUT
         echo "TAGS_ONLY_CSV=$(sed -r 's/\s+/,/g' <<< `echo $TAGS_ONLY`)" >> $GITHUB_OUTPUT
 
     - name: print tags
