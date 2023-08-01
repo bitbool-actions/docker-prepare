@@ -69,7 +69,7 @@ runs:
         registry: ${{ inputs.DOCKER_REGISTRY }}
         username: ${{ inputs.DOCKER_USER }}
         password: ${{ inputs.DOCKER_PASSWORD }}
-      if: !contains( ${{ inputs.DOCKER_REGISTRY }}, 'amazonaws.com')
+      if: "!contains( ${{ inputs.DOCKER_REGISTRY }}, 'amazonaws.com')"
 
     - name: Docker meta
       id: meta
