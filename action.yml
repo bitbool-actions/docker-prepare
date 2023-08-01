@@ -56,11 +56,16 @@ runs:
         aws-region: ${{ inputs.AWS_REGION }}
       if: contains( ${{ inputs.DOCKER_REGISTRY }}, 'amazonaws.com')
 
+    - name: Get AWS Registry Id
+      id: aws_registry_id
+      shell: bash
+      run: echo AWS_REGISTRY_ID=$(echo ${{ inputs.DOCKER_REGISTRY }} | sed 's/\..*//' ) >> "$GITHUB_OUTPUT"
+
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
       with:
-        registries: ${{ inputs.DOCKER_REGISTRY }}
+        registries: ${{ steps.aws_registry_id.outputs.AWS_REGISTRY_ID }}
       if: contains( ${{ inputs.DOCKER_REGISTRY }}, 'amazonaws.com')
 
     - name: Login to registry
