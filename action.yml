@@ -52,13 +52,13 @@ runs:
       shell: bash       
       run: |
         docker context create builders || true
-     if: ${{ inputs.DOCKER_CONTEXT_CREATE == 'true' }}
+      if: ${{ inputs.DOCKER_CONTEXT_CREATE == 'true' }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
       with:
         endpoint: builders
-     if: ${{ inputs.DOCKER_CONTEXT_CREATE == 'true' }}
+      if: ${{ inputs.DOCKER_CONTEXT_CREATE == 'true' }}
      
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
