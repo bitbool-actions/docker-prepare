@@ -16,6 +16,16 @@ inputs:
     default: "false"    
   DOCKER_PASSWORD:
     required: true
+  DEFAULT_TAGS:
+    required: false
+    default: |
+      type=ref,event=branch
+      type=ref,event=pr
+      type=ref,event=tag
+      type=semver,pattern={{version}}
+      type=raw,value={{date 'YYYYMMDD_HHMMSS'}}
+      type=sha
+      type=sha,enable=true,priority=100,prefix=,suffix=,format=short      
   EXTRA_TAGS:
     required: false
     default: ""
@@ -101,13 +111,7 @@ runs:
         flavor: |
           latest=true
         tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=ref,event=tag
-          type=semver,pattern={{version}}
-          type=raw,value={{date 'YYYYMMDD_HHMMSS'}}
-          type=sha
-          type=sha,enable=true,priority=100,prefix=,suffix=,format=short
+          ${{ inputs.DEFAULT_TAGS }}
           type=raw,value=${{ inputs.EXTRA_TAGS }}
 
     - name: set output
