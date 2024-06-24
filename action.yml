@@ -35,8 +35,11 @@ inputs:
   
 outputs:
   tags:
-    description: "tagged images"
+    description: "images tags"
     value: "${{ steps.meta.outputs.tags }}"
+  lebels:
+    description: "image lebels"
+    value: "${{ steps.meta.outputs.labels }}"    
   images_with_tags:
     description: "tagged images comma separated"
     value: "${{ steps.set_outputs.outputs.IMAGES_WITH_TAGS }}"
