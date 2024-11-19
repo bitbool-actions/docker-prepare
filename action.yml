@@ -106,6 +106,7 @@ runs:
         password: ${{ inputs.DOCKER_PASSWORD }}
       if: "!contains( ${{ inputs.DOCKER_REGISTRY }}, 'amazonaws.com')"
 
+      # in 5.6 they change the shortsha to 12 chars. added DOCKER_METADATA_SHORT_SHA_LENGTH says here https://github.com/docker/metadata-action/pull/467
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v5.5.1
