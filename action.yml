@@ -108,7 +108,7 @@ runs:
 
     - name: Docker meta
       id: meta
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v5.5
       with:
         images: ${{ inputs.DOCKER_REGISTRY }}/${{ inputs.DOCKER_REPO }}
         flavor: |
