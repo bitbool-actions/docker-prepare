@@ -25,7 +25,20 @@ inputs:
       type=semver,pattern={{version}}
       type=raw,value={{date 'YYYYMMDD_HHMMSS'}}
       type=sha
-      type=sha,enable=true,priority=100,prefix=,suffix=,format=short      
+      type=sha,enable=true,priority=100,prefix=,suffix=,format=short
+  DEFAULT_TAGS_COMMIT_HASH_FIRST:
+    required: false
+    default: |
+      type=sha,enable=true,priority=100,prefix=,suffix=,format=short    
+      type=ref,event=branch
+      type=ref,event=pr
+      type=ref,event=tag
+      type=semver,pattern={{version}}
+      type=raw,value={{date 'YYYYMMDD_HHMMSS'}}
+      type=sha
+  DOCKER_TAGS_SEND_COMMIT_HASH_FIRST:
+    required: false
+    default: "false"        
   EXTRA_TAGS:
     required: false
     default: ""
@@ -36,10 +49,10 @@ inputs:
 outputs:
   tags:
     description: "images tags"
-    value: "${{ steps.meta.outputs.tags }}"
+    value: "${{ steps.meta.outputs.tags || steps.meta_sha_first.outputs.tags }}"
   lebels:
     description: "image lebels"
-    value: "${{ steps.meta.outputs.labels }}"    
+    value: "${{ steps.meta.outputs.labels || steps.meta_sha_first.outputs.labels }}"    
   images_with_tags:
     description: "tagged images comma separated"
     value: "${{ steps.set_outputs.outputs.IMAGES_WITH_TAGS }}"
@@ -51,7 +64,7 @@ outputs:
     value: "${{ steps.set_outputs.outputs.TAGS_ONLY_CSV }}"  
   json:
     description: "tag json"
-    value: "${{ steps.meta.outputs.json }}"
+    value: "${{ steps.meta.outputs.json || steps.meta_sha_first.outputs.json }}"
 runs:
   using: "composite"
   steps:
@@ -117,12 +130,25 @@ runs:
         tags: |
           ${{ inputs.DEFAULT_TAGS }}
           type=raw,value=${{ inputs.EXTRA_TAGS }}
+      if: ${{ inputs.DOCKER_TAGS_SEND_COMMIT_HASH_FIRST == 'false' }}
+
+    - name: Docker meta
+      id: meta_sha_first
+      uses: docker/metadata-action@v5.5.1
+      with:
+        images: ${{ inputs.DOCKER_REGISTRY }}/${{ inputs.DOCKER_REPO }}
+        flavor: |
+          latest=true
+        tags: |
+          ${{ inputs.DEFAULT_TAGS_COMMIT_HASH_FIRST }}
+          type=raw,value=${{ inputs.EXTRA_TAGS }}
+      if: ${{ inputs.DOCKER_TAGS_SEND_COMMIT_HASH_FIRST == 'true' }}
 
     - name: set output
       id: set_outputs
       shell: bash
       run: |
-        IMAGES_WITH_TAGS=$(echo "${{ steps.meta.outputs.tags }}" | tr -d '\r' | tr '\n' ' ')
+        IMAGES_WITH_TAGS=$(echo "${{ steps.meta.outputs.tags || steps.meta_sha_first.outputs.tags }}" | tr -d '\r' | tr '\n' ' ')
         echo "IMAGES_WITH_TAGS=$IMAGES_WITH_TAGS" >> $GITHUB_OUTPUT
         TAGS_ONLY=$(echo $IMAGES_WITH_TAGS | sed 's#${{ inputs.DOCKER_REGISTRY }}/${{ inputs.DOCKER_REPO }}:##g' )
         echo "TAGS_ONLY=$TAGS_ONLY" >> $GITHUB_OUTPUT
