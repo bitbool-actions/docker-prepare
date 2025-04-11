@@ -29,13 +29,13 @@ inputs:
   DEFAULT_TAGS_COMMIT_HASH_FIRST:
     required: false
     default: |
-      type=sha,enable=true,priority=100,prefix=,suffix=,format=short    
-      type=ref,event=branch
-      type=ref,event=pr
-      type=ref,event=tag
-      type=semver,pattern={{version}}
-      type=raw,value={{date 'YYYYMMDD_HHMMSS'}}
-      type=sha
+      type=sha,enable=true,priority=10000,prefix=,suffix=,format=short    
+      type=ref,priority=900,event=branch
+      type=ref,priority=800,event=pr
+      type=ref,priority=700,event=tag
+      type=semver,priority=600,pattern={{version}}
+      type=raw,priority=500,value={{date 'YYYYMMDD_HHMMSS'}}
+      type=sha,priority=400
   DOCKER_TAGS_SEND_COMMIT_HASH_FIRST:
     required: false
     default: "false"        
