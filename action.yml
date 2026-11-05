@@ -119,6 +119,16 @@ runs:
         password: ${{ inputs.DOCKER_PASSWORD }}
       if: "!contains( ${{ inputs.DOCKER_REGISTRY }}, 'amazonaws.com')"
 
+    - name: Prepare extra tags
+      id: extra_tags
+      shell: bash
+      env:
+        EXTRA_TAGS: ${{ inputs.EXTRA_TAGS }}
+      run: |
+        echo "tags<<EOF" >> "$GITHUB_OUTPUT"
+        echo "$EXTRA_TAGS" | tr ',' '\n' | sed '/^[[:space:]]*$/d; s/^[[:space:]]*//; s/[[:space:]]*$//' | sed 's/^/type=raw,value=/' >> "$GITHUB_OUTPUT"
+        echo "EOF" >> "$GITHUB_OUTPUT"
+    
       # in 5.6 they change the shortsha to 12 chars. added DOCKER_METADATA_SHORT_SHA_LENGTH says here https://github.com/docker/metadata-action/pull/467
     - name: Docker meta
       id: meta
@@ -129,7 +139,7 @@ runs:
           latest=true
         tags: |
           ${{ inputs.DEFAULT_TAGS }}
-          type=raw,value=${{ inputs.EXTRA_TAGS }}
+          ${{ steps.extra_tags.outputs.tags }}
       if: ${{ inputs.DOCKER_TAGS_SEND_COMMIT_HASH_FIRST == 'false' }}
 
     - name: Docker meta
